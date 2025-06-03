@@ -4,6 +4,13 @@ import { Link } from "react-router-dom";
 import "./register.css";
 
 export default function Register() {
+    const navigate = useNavigate();
+     const handleContinuar = () => {
+    navigate('/login');
+    const handleRegresar = () => {
+    navigate('/');
+  };
+  };
   return (
     <div className="form-container">
       <h1>Secure Report</h1>
@@ -15,10 +22,10 @@ export default function Register() {
       <input type="password" />
 
       <div className="form-buttons">
-        <Link to="/">
-          <button>Regresar</button>
-        </Link>
-        <button>Continuar</button>
+        
+       <button onClick={handleRegresar}>Regresar</button>
+      
+        <button onClick={handleContinuar}>Continuar</button>
       </div>
 
       <Link to="/login" className="form-link">

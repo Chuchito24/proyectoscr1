@@ -51,3 +51,25 @@
   color: #007bff;
   text-decoration: none;
 }
+.form-container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 350px;
+  margin: auto;
+  margin-top: 100px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.form-container input,
+.form-container textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 8px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
