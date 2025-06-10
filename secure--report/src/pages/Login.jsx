@@ -1,7 +1,6 @@
-// src/Login.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './login.css';
+import '../Style/login.css'; // Ruta CSS corregida
 
 export default function Login() {
   const navigate = useNavigate();
@@ -9,9 +8,12 @@ export default function Login() {
   const handleRegresar = () => {
     navigate('/');
   };
+  const handleIniciarsesion = () => {
+    navigate('/register');
+  };
 
   const handleContinuar = () => {
-    navigate('/NewReport');
+    navigate('/Principal');
   };
 
   return (
@@ -29,7 +31,7 @@ export default function Login() {
         <button onClick={handleContinuar}>Continuar</button>
       </div>
 
-      <p style={{ color: '#3366ff', cursor: 'pointer' }}>No tengo cuenta</p>
+      <p style={{ color: '#3366ff', cursor: 'pointer' }}onClick={handleIniciarsesion}>No tengo cuenta</p>
     </div>
   );
 }

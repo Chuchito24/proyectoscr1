@@ -1,3 +1,6 @@
+import React from 'react';
+import '../Style/register.css'; // Puedes crear uno específico o reutilizar el de register/login
+
 export default function NewReport() {
   return (
     <div className="form-container">

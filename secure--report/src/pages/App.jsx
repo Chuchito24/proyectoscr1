@@ -1,6 +1,5 @@
-import './App.css';
+import '../Style/App.css'; // Ruta CSS relativa correcta
 import { Link } from 'react-router-dom';
-import logo from '/imagen.png';
 
 function App() {
   return (
@@ -39,7 +38,7 @@ function App() {
 
       {/* Pie de página */}
       <div className="footer">
-        <img src={logo} alt="SR Logo" className="logo" />
+        <img src="/imagen.png" alt="SR Logo" className="logo" />
       </div>
     </div>
   );
