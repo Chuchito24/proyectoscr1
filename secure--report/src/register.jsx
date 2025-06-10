@@ -1,30 +1,34 @@
-
-
-import { Link } from "react-router-dom";
-import "./register.css";
+// src/Register.jsx
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './register.css';
 
 export default function Register() {
-    const navigate = useNavigate();
-     const handleContinuar = () => {
+  const navigate = useNavigate();
+
+  const handleContinuar = () => {
     navigate('/login');
-    const handleRegresar = () => {
+  };
+
+  const handleRegresar = () => {
     navigate('/');
   };
-  };
+
   return (
     <div className="form-container">
       <h1>Secure Report</h1>
+
       <label>Usuario</label>
       <input type="text" />
+
       <label>Correo</label>
       <input type="email" />
+
       <label>Contraseña</label>
       <input type="password" />
 
       <div className="form-buttons">
-        
-       <button onClick={handleRegresar}>Regresar</button>
-      
+        <button onClick={handleRegresar}>Regresar</button>
         <button onClick={handleContinuar}>Continuar</button>
       </div>
 

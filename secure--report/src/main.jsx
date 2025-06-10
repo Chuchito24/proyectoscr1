@@ -1,10 +1,11 @@
+// src/main.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import App from './App.jsx'
-import Login from './pages/login.jsx'
-import Register from './pages/register.jsx'
+import App from './App.jsx';
+import Login from './Login.jsx';
+import Register from './register.jsx';
 import NewReport from './pages/NewReport.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -18,4 +19,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
-)
+);
