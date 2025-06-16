@@ -62,3 +62,25 @@
   font-weight: bold;
   color: #333;
 }
+.principal-header {
+  position: relative; /* para que el absolute sea relativo a este contenedor */
+  padding: 10px 20px;
+  background-color: #636efd; /* como antes */
+  text-align: center; /* para que el título quede centrado (o lo que ya tengas) */
+}
+
+.cerrar-sesion-btn {
+  position: absolute;
+  right: 20px; /* separación desde la derecha */
+  top: 50%;     /* para centrar verticalmente */
+  transform: translateY(-50%);
+  
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+}

@@ -7,8 +7,9 @@ import Login from './pages/Login.jsx';
 import Register from './pages/register.jsx';
 import NewReport from './pages/NewReport.jsx';
 import Principal from './pages/Principal.jsx';
-// import ConsultarEliminar from './pages/ConsultarEliminar.jsx';
-// import Actualizar from './pages/Actualizar.jsx';
+import ConsultarEliminar from './pages/ConsultarEliminar.jsx';
+import Actualizar from './pages/Actualizar.jsx';
+import PublicReports from './pages/PublicReports.jsx';  // Importa el nuevo componente
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -19,8 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/register" element={<Register />} />
         <Route path="/NewReport" element={<NewReport />} />
         <Route path="/Principal" element={<Principal />} />
-        {/* <Route path="/ConsultarEliminar" element={<ConsultarEliminar />} /> */}
-        {/* <Route path="/Actualizar" element={<Actualizar />} /> */}
+        <Route path="/ConsultarEliminar" element={<ConsultarEliminar />} />
+        <Route path="/Actualizar" element={<Actualizar />} />
+        <Route path="/PublicReports" element={<PublicReports />} /> {/* Nueva ruta */}
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
