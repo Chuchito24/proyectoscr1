@@ -3,8 +3,8 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background: linear-gradient(to right, #2e3b8f, #8baedc);
-  color: white;
+  background: linear-gradient(to right, #3e4a7e, #0f49a0);
+  color: rgb(255, 255, 255);
 }
 
 .container {
@@ -22,8 +22,8 @@ body {
 }
 
 .header-button {
-  background-color: #ffffff;
-  color: #000;
+  background-color: #d4e1f0;
+  color: #000000;
   padding: 6px 16px;
   border: none;
   border-radius: 6px;
@@ -33,7 +33,7 @@ body {
 }
 
 .header-button:hover {
-  background-color: #dddddd;
+  background-color: #000000;
 }
 
 .content {
@@ -69,5 +69,6 @@ body {
 
 .logo {
   height: 450px;
+
 }
 

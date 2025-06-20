@@ -50,8 +50,10 @@ export default function Actualizar() {
       await updateDoc(ref, {
         direccion: reporte.direccion,
         fecha: reporte.fecha,
-        nombre: reporte.nombre,
+        nombre: reporte.tipoReporte === 'personal' ? reporte.nombre : '',
+        representante: reporte.tipoReporte === 'comunitario' ? reporte.representante : '',
         acontecimiento: reporte.acontecimiento,
+        tipoReporte: reporte.tipoReporte,
       });
 
       setMensaje('✅ Reporte actualizado correctamente.');
@@ -87,6 +89,16 @@ export default function Actualizar() {
         <>
           <h3>✏️ Editar Reporte</h3>
 
+          <label>Tipo de reporte</label>
+          <select
+            value={reporte.tipoReporte}
+            onChange={(e) => setReporte({ ...reporte, tipoReporte: e.target.value })}
+          >
+            <option value="">--Selecciona--</option>
+            <option value="personal">Personal</option>
+            <option value="comunitario">Comunitario</option>
+          </select>
+
           <label>Dirección</label>
           <input
             type="text"
@@ -101,11 +113,20 @@ export default function Actualizar() {
             onChange={(e) => setReporte({ ...reporte, fecha: e.target.value })}
           />
 
-          <label>Nombre</label>
+          <label>Nombre del afectado</label>
           <input
             type="text"
             value={reporte.nombre}
             onChange={(e) => setReporte({ ...reporte, nombre: e.target.value })}
+            disabled={reporte.tipoReporte === 'comunitario'}
+          />
+
+          <label>Representante</label>
+          <input
+            type="text"
+            value={reporte.representante || ''}
+            onChange={(e) => setReporte({ ...reporte, representante: e.target.value })}
+            disabled={reporte.tipoReporte === 'personal'}
           />
 
           <label>Acontecimiento</label>

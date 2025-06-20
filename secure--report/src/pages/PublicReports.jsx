@@ -6,8 +6,11 @@ import '../Style/ConsultarEliminar.css';
 
 export default function PublicReports() {
   const [reportesPublicos, setReportesPublicos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Cargar reportes públicos
   useEffect(() => {
     const fetchPublicReports = async () => {
       try {
@@ -22,6 +25,9 @@ export default function PublicReports() {
         setReportesPublicos(lista);
       } catch (error) {
         console.error('Error al obtener reportes públicos:', error);
+        setError('No se pudieron cargar los reportes públicos');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -32,7 +38,11 @@ export default function PublicReports() {
     <div className="consultar-container">
       <h2>📢 Reportes Públicos</h2>
 
-      {reportesPublicos.length === 0 ? (
+      {loading ? (
+        <p>Cargando reportes...</p>
+      ) : error ? (
+        <p style={{ color: 'red' }}>{error}</p>
+      ) : reportesPublicos.length === 0 ? (
         <p>No hay reportes públicos disponibles.</p>
       ) : (
         <table>
@@ -42,6 +52,7 @@ export default function PublicReports() {
               <th>Dirección</th>
               <th>Fecha</th>
               <th>Nombre</th>
+              <th>Representante</th> {/* Nueva columna */}
               <th>Acontecimiento</th>
             </tr>
           </thead>
@@ -51,7 +62,8 @@ export default function PublicReports() {
                 <td>{r.id}</td>
                 <td>{r.direccion}</td>
                 <td>{r.fecha}</td>
-                <td>{r.nombre}</td>
+                <td>{r.tipoReporte === 'personal' ? r.nombre : '—'}</td> {/* Solo mostrar el nombre si es personal */}
+                <td>{r.tipoReporte === 'comunitario' ? r.representante : '—'}</td> {/* Mostrar representante si es comunitario */}
                 <td>{r.acontecimiento}</td>
               </tr>
             ))}

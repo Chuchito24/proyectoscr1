@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase';
+import '../Style/register.css';
 import { doc, setDoc } from 'firebase/firestore';
 
 export default function Register() {
