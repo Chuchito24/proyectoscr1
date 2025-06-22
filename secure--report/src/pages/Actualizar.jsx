@@ -12,6 +12,7 @@ export default function Actualizar() {
   const [erroresCampo, setErroresCampo] = useState({});
   const navigate = useNavigate();
 
+  // Buscar reporte por ID y usuario actual
   const handleBuscar = async () => {
     setMensaje('');
     setError('');
@@ -52,40 +53,52 @@ export default function Actualizar() {
     }
   };
 
+  // Actualizar reporte con validaciones
   const handleActualizar = async () => {
     setError('');
     setMensaje('');
     const errores = {};
 
+    const hoy = new Date().toISOString().split('T')[0];
+    const nombreApellidoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]+)+$/;
+
     if (!reporte.tipoReporte) errores.tipoReporte = true;
     if (!reporte.direccion.trim()) errores.direccion = true;
     if (!reporte.fecha) errores.fecha = true;
+    if (reporte.fecha > hoy) {
+      errores.fecha = true;
+      setError('❌ La fecha no puede ser futura.');
+    }
+
     if (!reporte.acontecimiento.trim()) errores.acontecimiento = true;
 
-    if (reporte.tipoReporte === 'personal' && !reporte.nombre.trim()) {
-      errores.nombre = true;
+    if (reporte.tipoReporte === 'personal') {
+      if (!reporte.nombre.trim() || !nombreApellidoRegex.test(reporte.nombre.trim())) {
+        errores.nombre = true;
+        setError('❌ Nombre inválido. Debe tener al menos nombre y apellido.');
+      }
     }
-    if (reporte.tipoReporte === 'comunitario' && !reporte.representante.trim()) {
-      errores.representante = true;
+
+    if (reporte.tipoReporte === 'comunitario') {
+      if (!reporte.representante.trim() || !nombreApellidoRegex.test(reporte.representante.trim())) {
+        errores.representante = true;
+        setError('❌ Representante inválido. Debe tener al menos nombre y apellido.');
+      }
     }
 
     setErroresCampo(errores);
-
-    if (Object.keys(errores).length > 0) {
-      setError('Por favor completa todos los campos obligatorios.');
-      return;
-    }
+    if (Object.keys(errores).length > 0) return;
 
     try {
       const ref = doc(db, 'reportes', reporte.firebaseId);
       await updateDoc(ref, {
         direccion: reporte.direccion,
         fecha: reporte.fecha,
-        nombre: reporte.tipoReporte === 'personal' ? reporte.nombre : '',
-        representante: reporte.tipoReporte === 'comunitario' ? reporte.representante : '',
+        nombre: reporte.tipoReporte === 'personal' ? reporte.nombre.trim() : '',
+        representante: reporte.tipoReporte === 'comunitario' ? reporte.representante.trim() : '',
         acontecimiento: reporte.acontecimiento,
         tipoReporte: reporte.tipoReporte,
-        publico: !!reporte.publico, // Si no se marca el checkbox, queda false (privado)
+        publico: !!reporte.publico,
       });
 
       setMensaje('✅ Reporte actualizado correctamente.');
@@ -171,15 +184,13 @@ export default function Actualizar() {
             rows="4"
             className={erroresCampo.acontecimiento ? 'input-error' : ''}
             value={reporte.acontecimiento}
-            onChange={(e) =>
-              setReporte({ ...reporte, acontecimiento: e.target.value })
-            }
+            onChange={(e) => setReporte({ ...reporte, acontecimiento: e.target.value })}
           />
 
           <p>
-            Estado actual:{" "}
-            <strong style={{ color: reporte.publico ? "lightgreen" : "orange" }}>
-              {reporte.publico ? "Público" : "Privado"}
+            Estado actual:{' '}
+            <strong style={{ color: reporte.publico ? 'lightgreen' : 'orange' }}>
+              {reporte.publico ? 'Público' : 'Privado'}
             </strong>
           </p>
 
@@ -187,10 +198,8 @@ export default function Actualizar() {
             <input
               type="checkbox"
               checked={!!reporte.publico}
-              onChange={(e) =>
-                setReporte({ ...reporte, publico: e.target.checked })
-              }
-            />{" "}
+              onChange={(e) => setReporte({ ...reporte, publico: e.target.checked })}
+            />{' '}
             ¿Hacer público este reporte?
           </label>
 

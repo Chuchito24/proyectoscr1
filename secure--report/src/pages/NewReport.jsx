@@ -8,8 +8,8 @@ export default function NewReport() {
   const [formData, setFormData] = useState({
     direccion: '',
     fecha: '',
-    tipoReporte: 'personal',   // <-- nuevo campo con valor por defecto
-    representante: '',         // <-- nuevo campo
+    tipoReporte: 'personal',
+    representante: '',
     nombre: '',
     acontecimiento: '',
     publico: false,
@@ -21,24 +21,13 @@ export default function NewReport() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Al cambiar tipoReporte, también limpiamos el campo que se debe bloquear
     if (name === 'tipoReporte') {
-      if (value === 'comunitario') {
-        setFormData({
-          ...formData,
-          tipoReporte: value,
-          nombre: '',           // limpiamos nombre
-          representante: formData.representante, // mantenemos representante
-        });
-      } else {
-        // personal
-        setFormData({
-          ...formData,
-          tipoReporte: value,
-          representante: '',    // limpiamos representante
-          nombre: formData.nombre, // mantenemos nombre
-        });
-      }
+      setFormData((prev) => ({
+        ...prev,
+        tipoReporte: value,
+        nombre: value === 'personal' ? prev.nombre : '',
+        representante: value === 'comunitario' ? prev.representante : '',
+      }));
       return;
     }
 
@@ -56,31 +45,39 @@ export default function NewReport() {
         return;
       }
 
-      // Validar que la fecha no sea futura
-      const fechaSeleccionada = new Date(formData.fecha);
-      const hoy = new Date();
-      hoy.setHours(23, 59, 59, 999);
-
-      if (fechaSeleccionada > hoy) {
-        setSuccessMessage('❌ La fecha no puede ser futura.');
+      const hoy = new Date().toISOString().split('T')[0];
+      if (formData.fecha > hoy) {
+        setSuccessMessage('❌ La fecha no puede ser posterior a hoy.');
         return;
       }
 
-      // Validar campos según tipoReporte
-      if (formData.tipoReporte === 'comunitario' && !formData.representante.trim()) {
-        setSuccessMessage('❌ El campo representante es obligatorio para reportes comunitarios.');
-        return;
-      }
-      if (formData.tipoReporte === 'personal' && !formData.nombre.trim()) {
-        setSuccessMessage('❌ El campo nombre es obligatorio para reportes personales.');
-        return;
+      const nombreApellidoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]+)+$/;
+
+      if (formData.tipoReporte === 'comunitario') {
+        const rep = formData.representante.trim();
+        if (!rep) {
+          setSuccessMessage('❌ El campo representante es obligatorio para reportes comunitarios.');
+          return;
+        }
+        if (!nombreApellidoRegex.test(rep)) {
+          setSuccessMessage('❌ El representante debe contener al menos nombre y apellido (solo letras).');
+          return;
+        }
       }
 
-      // Obtener cantidad de reportes del usuario
-      const reportesQuery = query(
-        collection(db, 'reportes'),
-        where('usuarioId', '==', usuario.uid)
-      );
+      if (formData.tipoReporte === 'personal') {
+        const nombre = formData.nombre.trim();
+        if (!nombre) {
+          setSuccessMessage('❌ El campo nombre es obligatorio para reportes personales.');
+          return;
+        }
+        if (!nombreApellidoRegex.test(nombre)) {
+          setSuccessMessage('❌ El nombre debe contener al menos nombre y apellido (solo letras).');
+          return;
+        }
+      }
+
+      const reportesQuery = query(collection(db, 'reportes'), where('usuarioId', '==', usuario.uid));
       const snapshot = await getDocs(reportesQuery);
       const nextId = snapshot.size + 1;
 
@@ -113,12 +110,7 @@ export default function NewReport() {
       {successMessage && <div className="success-message">{successMessage}</div>}
 
       <label>Dirección</label>
-      <input
-        type="text"
-        name="direccion"
-        value={formData.direccion}
-        onChange={handleChange}
-      />
+      <input type="text" name="direccion" value={formData.direccion} onChange={handleChange} />
 
       <label>Fecha</label>
       <input
@@ -142,7 +134,6 @@ export default function NewReport() {
         value={formData.nombre}
         onChange={handleChange}
         disabled={formData.tipoReporte === 'comunitario'}
-        placeholder={formData.tipoReporte === 'comunitario' ? 'No editable para comunitario' : ''}
       />
 
       <label>Representante</label>
@@ -152,25 +143,14 @@ export default function NewReport() {
         value={formData.representante}
         onChange={handleChange}
         disabled={formData.tipoReporte === 'personal'}
-        placeholder={formData.tipoReporte === 'personal' ? 'No editable para personal' : ''}
       />
 
       <label>Acontecimiento</label>
-      <textarea
-        name="acontecimiento"
-        rows="4"
-        value={formData.acontecimiento}
-        onChange={handleChange}
-      ></textarea>
+      <textarea name="acontecimiento" rows="4" value={formData.acontecimiento} onChange={handleChange} />
 
       <label>
         Hacer público el reporte
-        <input
-          type="checkbox"
-          name="publico"
-          checked={formData.publico}
-          onChange={handleChange}
-        />
+        <input type="checkbox" name="publico" checked={formData.publico} onChange={handleChange} />
       </label>
 
       <div className="button-group">
