@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import '../Style/NewReport.css';
+import '../Style/Actualizar.css';
 
 export default function Actualizar() {
   const [idBuscar, setIdBuscar] = useState('');
   const [reporte, setReporte] = useState(null);
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+  const [erroresCampo, setErroresCampo] = useState({});
   const navigate = useNavigate();
 
   const handleBuscar = async () => {
     setMensaje('');
     setError('');
+    setErroresCampo({});
     const usuario = auth.currentUser;
 
     if (!usuario) {
@@ -21,10 +23,16 @@ export default function Actualizar() {
       return;
     }
 
+    const idNum = Number(idBuscar);
+    if (isNaN(idNum)) {
+      setError('El ID debe ser un número válido.');
+      return;
+    }
+
     try {
       const q = query(
         collection(db, 'reportes'),
-        where('id', '==', idBuscar),
+        where('id', '==', idNum),
         where('usuarioId', '==', usuario.uid)
       );
 
@@ -45,6 +53,29 @@ export default function Actualizar() {
   };
 
   const handleActualizar = async () => {
+    setError('');
+    setMensaje('');
+    const errores = {};
+
+    if (!reporte.tipoReporte) errores.tipoReporte = true;
+    if (!reporte.direccion.trim()) errores.direccion = true;
+    if (!reporte.fecha) errores.fecha = true;
+    if (!reporte.acontecimiento.trim()) errores.acontecimiento = true;
+
+    if (reporte.tipoReporte === 'personal' && !reporte.nombre.trim()) {
+      errores.nombre = true;
+    }
+    if (reporte.tipoReporte === 'comunitario' && !reporte.representante.trim()) {
+      errores.representante = true;
+    }
+
+    setErroresCampo(errores);
+
+    if (Object.keys(errores).length > 0) {
+      setError('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+
     try {
       const ref = doc(db, 'reportes', reporte.firebaseId);
       await updateDoc(ref, {
@@ -54,6 +85,7 @@ export default function Actualizar() {
         representante: reporte.tipoReporte === 'comunitario' ? reporte.representante : '',
         acontecimiento: reporte.acontecimiento,
         tipoReporte: reporte.tipoReporte,
+        publico: !!reporte.publico, // Si no se marca el checkbox, queda false (privado)
       });
 
       setMensaje('✅ Reporte actualizado correctamente.');
@@ -91,6 +123,7 @@ export default function Actualizar() {
 
           <label>Tipo de reporte</label>
           <select
+            className={erroresCampo.tipoReporte ? 'input-error' : ''}
             value={reporte.tipoReporte}
             onChange={(e) => setReporte({ ...reporte, tipoReporte: e.target.value })}
           >
@@ -102,6 +135,7 @@ export default function Actualizar() {
           <label>Dirección</label>
           <input
             type="text"
+            className={erroresCampo.direccion ? 'input-error' : ''}
             value={reporte.direccion}
             onChange={(e) => setReporte({ ...reporte, direccion: e.target.value })}
           />
@@ -109,6 +143,7 @@ export default function Actualizar() {
           <label>Fecha</label>
           <input
             type="date"
+            className={erroresCampo.fecha ? 'input-error' : ''}
             value={reporte.fecha}
             onChange={(e) => setReporte({ ...reporte, fecha: e.target.value })}
           />
@@ -116,6 +151,7 @@ export default function Actualizar() {
           <label>Nombre del afectado</label>
           <input
             type="text"
+            className={erroresCampo.nombre ? 'input-error' : ''}
             value={reporte.nombre}
             onChange={(e) => setReporte({ ...reporte, nombre: e.target.value })}
             disabled={reporte.tipoReporte === 'comunitario'}
@@ -124,6 +160,7 @@ export default function Actualizar() {
           <label>Representante</label>
           <input
             type="text"
+            className={erroresCampo.representante ? 'input-error' : ''}
             value={reporte.representante || ''}
             onChange={(e) => setReporte({ ...reporte, representante: e.target.value })}
             disabled={reporte.tipoReporte === 'personal'}
@@ -132,11 +169,30 @@ export default function Actualizar() {
           <label>Acontecimiento</label>
           <textarea
             rows="4"
+            className={erroresCampo.acontecimiento ? 'input-error' : ''}
             value={reporte.acontecimiento}
             onChange={(e) =>
               setReporte({ ...reporte, acontecimiento: e.target.value })
             }
           />
+
+          <p>
+            Estado actual:{" "}
+            <strong style={{ color: reporte.publico ? "lightgreen" : "orange" }}>
+              {reporte.publico ? "Público" : "Privado"}
+            </strong>
+          </p>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={!!reporte.publico}
+              onChange={(e) =>
+                setReporte({ ...reporte, publico: e.target.checked })
+              }
+            />{" "}
+            ¿Hacer público este reporte?
+          </label>
 
           <div className="button-group">
             <button onClick={handleActualizar}>Guardar cambios</button>

@@ -98,42 +98,43 @@ export default function ConsultarEliminar() {
         <p>No hay reportes aún.</p>
       ) : (
         <table>
-          <thead>
-            <tr>
-              <th>Firebase ID</th>
-              <th>ID</th>
-              <th>Dirección</th>
-              <th>Fecha</th>
-              <th>Tipo de reporte</th>
-              <th>Nombre</th>
-              <th>Representante</th>
-              <th>Acontecimiento</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reportes.map((r) => (
-              <tr key={r.firebaseId}>
-                <td>{r.firebaseId}</td>
-                <td>{r.id}</td>
-                <td>{r.direccion}</td>
-                <td>{r.fecha}</td>
-                <td>{r.tipoReporte || '—'}</td>
-                <td>{r.tipoReporte === 'personal' ? r.nombre : '—'}</td>
-                <td>{r.tipoReporte === 'comunitario' ? r.representante : '—'}</td>
-                <td>{r.acontecimiento}</td>
-                <td>{r.publico ? 'Público' : 'Privado'}</td>
-                <td>
-                  <button onClick={() => handleDelete(r.firebaseId)}>🗑 Eliminar</button>
-                  {!r.publico && (
-                    <button onClick={() => handlePublish(r.firebaseId)}>📢 Publicar</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  <thead>
+    <tr>
+      <th>Firebase ID</th>
+      <th>ID</th>
+      <th>Dirección</th>
+      <th>Fecha</th>
+      <th>Tipo de reporte</th>
+      <th>Nombre</th>
+      <th>Representante</th>
+      <th>Acontecimiento</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {reportes.map((r) => (
+      <tr key={r.firebaseId}>
+        <td>{r.firebaseId}</td>
+        <td>{r.id}</td>
+        <td>{r.direccion}</td>
+        <td>{r.fecha}</td>
+        <td>{r.tipoReporte || '—'}</td>
+        <td>{r.tipoReporte === 'personal' ? r.nombre : '—'}</td>
+        <td>{r.tipoReporte === 'comunitario' ? r.representante : '—'}</td>
+        <td>{r.acontecimiento}</td>
+        <td>{r.publico ? 'Público' : 'Privado'}</td>
+        <td>
+          <button onClick={() => handleDelete(r.firebaseId)}>🗑 Eliminar</button>
+          {!r.publico && (
+            <button onClick={() => handlePublish(r.firebaseId)}>📢 Publicar</button>
+          )}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
       )}
 
       <div className="botones-navegacion">
