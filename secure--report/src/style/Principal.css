@@ -5,10 +5,11 @@
 }
 
 .principal-header {
-  background-color: #f3f3f3;
-  color: rgb(43, 47, 255);
+  position: relative; /* para que el absolute sea relativo a este contenedor */
   padding: 10px 20px;
-  text-align: center;
+  background-color: rgb(215, 230, 253);  /* como antes */
+  text-align: center; /* para que el título quede centrado (o lo que ya tengas) */
+  color: rgb(43, 47, 255);
 }
 
 .principal-body {
@@ -32,13 +33,13 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .menu-lateral button:hover {
-background-color: #4CAF50;
+  background-color: #4CAF50;
   color: #000; /* Para mejorar contraste si lo deseas */
 }
-
 
 .principal-contenido {
   flex: 1;
@@ -48,46 +49,7 @@ background-color: #4CAF50;
 }
 
 .footer-ayuda {
-  background-color: #e0e0e0;
-  padding: 15px 20px;
-  text-align: center;
-}
-
-.lista-contactos {
-  list-style: none;
-  padding: 0;
-  margin-top: 10px;
-}
-
-.lista-contactos li {
-  margin: 5px 0;
-  font-weight: bold;
-  color: #2d1eff;
-}
-.principal-header {
-  position: relative; /* para que el absolute sea relativo a este contenedor */
-  padding: 10px 20px;
-  background-color:  rgb(215, 230, 253);  /* como antes */
-  text-align: center; /* para que el título quede centrado (o lo que ya tengas) */
-}
-
-.cerrar-sesion-btn {
-  position: absolute;
-  right: 20px; /* separación desde la derecha */
-  top: 50%;     /* para centrar verticalmente */
-  transform: translateY(-50%);
-  
-  background-color: #2563EB;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 14px;
-}
-.footer-ayuda {
-  background-color: rgb(215, 230, 253); 
+  background-color: rgb(215, 230, 253);
   padding: 20px;
   text-align: center;
 }
@@ -119,6 +81,7 @@ background-color: #4CAF50;
   justify-content: center;
   font-weight: 500;
 }
+
 .centros-ayuda-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -134,12 +97,13 @@ background-color: #4CAF50;
   text-decoration: none;
   color: #111;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
 }
 
 .ayuda-card-link:hover {
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   transform: translateY(-3px);
+  background-color: #e1c4f2; /* 💜 Morado claro intermedio */
 }
 
 .ayuda-card-link h3 {
@@ -153,6 +117,7 @@ background-color: #4CAF50;
   font-size: 0.9rem;
   color: #555;
 }
+
 .subtitulo-centros {
   margin-top: 20px;
   font-size: 1.4rem;
@@ -169,10 +134,138 @@ background-color: #4CAF50;
   text-align: center;
   color: #6a1b9a; 
 }
-.ayuda-card-link:hover {
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transform: translateY(-3px);
-  background-color: #e1c4f2; /* 💜 Morado claro intermedio */
+
+/* BOTONES Cerrar Sesión y Eliminar Cuenta */
+
+.cerrar-sesion-btn {
+  position: absolute;
+  right: 20px;  /* alineados a la derecha */
+  top: 40%;     /* un poco arriba para dejar espacio */
+  transform: translateY(-50%);
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
+
+.cerrar-sesion-btn:hover {
+  background-color: #ff1717;
+}
+
+.eliminar-cuenta-btn {
+  position: absolute;
+  right: 20px;  /* igual alineados a la derecha */
+  top: calc(40% + 42px); /* abajo del botón, 42px aprox. (altura + margen) */
+  transform: translateY(-50%);
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.eliminar-cuenta-btn:hover {
+  background-color: #d9363e;
+}
+/* Fondo semi-transparente */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Caja del mensaje */
+.modal-content {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  text-align: center;
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+}
+
+/* Botón para cerrar el mensaje si deseas */
+.modal-button {
+  margin-top: 15px;
+  padding: 6px 12px;
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  text-align: center;
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+  max-width: 90%;
+  width: 300px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.modal-button.confirm {
+  background-color: #d9363e;
+  color: white;
+}
+
+.modal-button.cancel {
+  background-color: #ccc;
+  color: #000;
+}
+
+.modal-button:hover {
+  opacity: 0.9;
+}
+
 
 

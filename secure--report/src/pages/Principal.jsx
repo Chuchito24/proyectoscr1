@@ -1,38 +1,149 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "../Style/Principal.css";
 import { useNavigate } from 'react-router-dom';
+import { auth, db } from "../firebase";
+import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export default function Principal() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  const handleNuevoReporte = () => {
-    navigate('/NewReport');
+  // Estados para modales
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [errorModalRedirectLogin, setErrorModalRedirectLogin] = useState(false);
+
+  useEffect(() => {
+    setUser(auth.currentUser);
+  }, []);
+
+  const handleNuevoReporte = () => navigate('/NewReport');
+  const handleConsultarEliminar = () => navigate('/ConsultarEliminar');
+  const handleActualizar = () => navigate('/Actualizar');
+  const handleVerPublicos = () => navigate('/PublicReports');
+  const handleCerrarSesion = () => navigate('/');
+
+  // Al dar click en "Eliminar cuenta", mostrar modal de confirmación
+  const iniciarEliminacion = () => {
+    setShowConfirmModal(true);
   };
 
-  const handleConsultarEliminar = () => {
-    navigate('/ConsultarEliminar');
+  // Al confirmar "Sí, eliminar", cerrar confirmación y abrir modal para contraseña
+  const handleConfirmarEliminarClick = () => {
+    setShowConfirmModal(false);
+    setPasswordInput("");
+    setShowPasswordModal(true);
   };
 
-  const handleActualizar = () => {
-    navigate('/Actualizar');
+  // Manejar la eliminación cuando se ingresa la contraseña
+  const confirmarEliminacion = async () => {
+    if (!user) return;
+    if (!passwordInput) return;
+
+    try {
+      // Reautenticación
+      const credential = EmailAuthProvider.credential(user.email, passwordInput);
+      await reauthenticateWithCredential(user, credential);
+
+      const uid = user.uid;
+
+      // Eliminar reportes del usuario
+      const reportesRef = collection(db, "reportes");
+      const q = query(reportesRef, where("usuarioId", "==", uid));
+      const querySnapshot = await getDocs(q);
+
+      const deletePromises = querySnapshot.docs.map((docu) =>
+        deleteDoc(doc(db, "reportes", docu.id))
+      );
+      await Promise.all(deletePromises);
+
+      // Eliminar cuenta
+      await deleteUser(user);
+
+      setShowPasswordModal(false);
+      setModalMessage("✅ Cuenta eliminada exitosamente.");
+      setErrorModalRedirectLogin(false);
+
+      setTimeout(() => {
+        setModalMessage("");
+        navigate("/");
+      }, 2500);
+
+    } catch (error) {
+      console.error("Error al eliminar cuenta:", error);
+
+      setShowPasswordModal(false);
+      setModalMessage("❌ Error: Verifica tu contraseña o vuelve a iniciar sesión.");
+      setErrorModalRedirectLogin(true);
+    }
   };
 
-  const handleVerPublicos = () => {
-    navigate('/PublicReports');
-  };
-
-  const handleCerrarSesion = () => {
-    navigate('/');  // ruta login
+  // Cerrar modal de mensaje, y redirigir si es error de sesión
+  const handleCerrarModalMensaje = () => {
+    setModalMessage("");
+    if (errorModalRedirectLogin) {
+      navigate("/"); // redirige a login
+      setErrorModalRedirectLogin(false);
+    }
   };
 
   return (
     <div className="principal-container">
       <header className="principal-header">
         <h2>Bienvenido a Secure Report</h2>
-        <button className="cerrar-sesion-btn" onClick={handleCerrarSesion}>
-          Cerrar sesión
-        </button>
+        <div>
+          <button className="cerrar-sesion-btn" onClick={handleCerrarSesion}>Cerrar sesión</button>
+          <button className="eliminar-cuenta-btn" onClick={iniciarEliminacion}>❌ Eliminar cuenta</button>
+        </div>
       </header>
+
+      {/* Modal de Confirmación */}
+      {showConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>¿Estás seguro de que deseas eliminar tu cuenta?</p>
+            <div className="modal-buttons">
+              <button className="modal-button confirm" onClick={handleConfirmarEliminarClick}>Sí, eliminar</button>
+              <button className="modal-button cancel" onClick={() => setShowConfirmModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para ingresar contraseña */}
+      {showPasswordModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>Por seguridad, ingresa tu contraseña para eliminar tu cuenta:</p>
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              autoFocus
+              placeholder="Contraseña"
+            />
+            <div className="modal-buttons" style={{ marginTop: "10px" }}>
+              <button className="modal-button confirm" onClick={confirmarEliminacion}>Confirmar</button>
+              <button className="modal-button cancel" onClick={() => setShowPasswordModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Mensaje con botón Aceptar */}
+      {modalMessage && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>{modalMessage}</p>
+            <div className="modal-buttons">
+              <button className="modal-button confirm" onClick={handleCerrarModalMensaje}>Aceptar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="principal-body">
         <aside className="menu-lateral">
@@ -44,12 +155,9 @@ export default function Principal() {
 
         <main className="principal-contenido">
           <p>Selecciona una opción del menú lateral para continuar.</p>
-          
-  
-           <h3 className="subtitulo-centros">CENTROS DE ATENCIÓN Y APOYO</h3>
+         <h3 className="subtitulo-centros">CENTROS DE ATENCIÓN Y APOYO</h3>
 
-          
-            <section className="centros-ayuda-grid">
+          <section className="centros-ayuda-grid">
             <a href="https://www.fgjcdmx.gob.mx/nuestros-servicios/ADEVI" target="_blank" rel="noopener noreferrer" className="ayuda-card-link">
               <h3>ADEVI - FGJCDMX</h3>
               <p>Atención a víctimas del delito en la Ciudad de México.</p>
@@ -130,16 +238,15 @@ export default function Principal() {
        <h3> Línea de la Vida</h3>
        <p>Atención 24/7 en crisis, adicciones y salud mental.</p>
     </a>
-  </section>
-       <h2 className="mensaje-final">Tú puedes, Secure Report siempre está contigo 💜</h2>
-   
+            
+            
+          </section>
+          
         </main>
       </div>
 
       <footer className="footer-ayuda">
-        <p className="ayuda-texto">
-          ¿Necesitas ayuda? Aquí tienes algunos contactos importantes:
-        </p>
+        <p className="ayuda-texto">¿Necesitas ayuda? Aquí tienes algunos contactos importantes:</p>
         <div className="ayuda-cards">
           <div className="ayuda-card">🚑 <strong>Ambulancia:</strong> 911</div>
           <div className="ayuda-card">🚓 <strong>Policía:</strong> 911</div>
