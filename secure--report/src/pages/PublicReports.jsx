@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import '../Style/ConsultarEliminar.css';
+import '../style/ConsultarEliminar.css';
 
 export default function PublicReports() {
   const [reportesPublicos, setReportesPublicos] = useState([]);
