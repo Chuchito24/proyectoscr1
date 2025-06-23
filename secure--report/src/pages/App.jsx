@@ -1,4 +1,4 @@
-import '../Style/App.css'; // Ruta CSS relativa correcta
+import '../style/App.css'; // Ruta CSS relativa correcta
 import { Link } from 'react-router-dom';
 
 function App() {

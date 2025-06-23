@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../Style/NewReport.css';
+import '../style/NewReport.css';
 import { db, auth } from '../firebase';
 import { collection, doc, setDoc, getDocs, query, where } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';

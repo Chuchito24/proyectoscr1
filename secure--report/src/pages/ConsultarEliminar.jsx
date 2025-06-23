@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import '../Style/ConsultarEliminar.css';
+import '../style/ConsultarEliminar.css';
 
 export default function ConsultarEliminar() {
   const [reportes, setReportes] = useState([]);

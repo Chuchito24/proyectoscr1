@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import '../Style/Actualizar.css';
+import '../style/Actualizar.css';
 
 export default function Actualizar() {
   const [idBuscar, setIdBuscar] = useState('');

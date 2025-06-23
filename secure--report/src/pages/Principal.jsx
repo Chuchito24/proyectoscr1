@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import "../Style/Principal.css";
+import "../style/Principal.css";
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from "../firebase";
 import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
